@@ -1,0 +1,3 @@
+const opened=new Promise((resolve,reject)=>{const r=indexedDB.open('daya-field-sales-demo-'+new URL('.',document.baseURI).pathname,1);r.onupgradeneeded=()=>r.result.createObjectStore('records');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+export async function get(key){const db=await opened;return new Promise((resolve,reject)=>{const r=db.transaction('records').objectStore('records').get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+export async function put(key,value){const db=await opened;return new Promise((resolve,reject)=>{const tx=db.transaction('records','readwrite');tx.objectStore('records').put(value,key);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
