@@ -2,6 +2,10 @@ import {markerMarkup,markerSize,markerDescription,markerSvg} from './map-symbols
 let current=null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function destroyMap(){if(current){current.destroy?.();current.remove?.();current=null;}}
+export function focusLocation({lat,lng}){
+ if(current?.setView){current.setView([lat,lng],16);window.L.circleMarker([lat,lng],{radius:7,color:'#fff',weight:3,fillColor:'#2864b7',fillOpacity:1}).addTo(current).bindTooltip('Ваше местоположение').openTooltip();}
+ else current?.setCenter?.([lat,lng],16);
+}
 export async function mountMap(element,s,objects,onOpen,onPoint){
  destroyMap();if(!element)return;
  if(s.settings.map.provider==='yandex'&&s.settings.map.yandexKey){try{return await yandex(element,s,objects,onOpen,onPoint);}catch(e){element.innerHTML='';const note=document.createElement('p');note.className='map-note';note.textContent='Яндекс Карты недоступны. Показываем тестовую подложку OpenStreetMap.';element.before(note);}}
